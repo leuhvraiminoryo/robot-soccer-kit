@@ -56,6 +56,8 @@ ball_height: float = ball_radius  # [m]
 game_duration: float = 300.0  # [s]
 halftime_duration: float = 120.0  # [s]
 default_penalty: float = 5.0  # [s]
+ball_abuse_default_penalty = 2.0 # [s]
+ball_abuse_multiplier = 2.0 
 grace_time: float = 3.0  # [s]
 
 # Number of penalty spots

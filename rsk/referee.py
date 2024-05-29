@@ -70,6 +70,8 @@ class Referee:
         ]
         self.reset_penalties()
 
+        self.ball_abuses = {}
+
         # Starting the Referee thread
         self.lock = threading.Lock()
         self.referee_thread = threading.Thread(target=lambda: self.thread())
@@ -168,6 +170,9 @@ class Referee:
         Resume the game
         """
         self.logger.info("Game resumed")
+
+        if self.goal_validated:
+            self.ball_abuses = {}
 
         self.game_state["game_paused"] = False
         self.game_state["game_state_msg"] = "Game is running..."
@@ -529,7 +534,12 @@ class Referee:
                             self.timed_circle_timers[robot] += elapsed
 
                             if self.timed_circle_timers[robot] > constants.timed_circle_time:
-                                self.add_penalty(constants.default_penalty, marker, "ball_abuse")
+                                if marker in self.ball_abuses.keys():
+                                    self.ball_abuses[marker] += 1
+                                else:
+                                    self.ball_abuses[marker] = 0
+
+                                self.add_penalty(constants.ball_abuse_default_penalty * (constants.ball_abuse_multiplier**self.ball_abuses[marker]), marker, "ball_abuse")
                     else:
                         self.timed_circle_timers[(team, number)] = None
                 else:
@@ -612,8 +622,9 @@ class Referee:
                             wait_ball_timestamp = time.time()
                         elif time.time() - wait_ball_timestamp >= 1:
                             self.game_state["game_state_msg"] = "Game is running..."
-                            self.goal_validated = None
+
                             self.resume_game()
+                            self.goal_validated = None
                     else:
                         wait_ball_timestamp = None
 
