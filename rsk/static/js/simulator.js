@@ -40,7 +40,7 @@ function simulator_initialize(backend, isView)
                 gradient.addColorStop(0.1, "rgba("+color+",0.5)");
                 gradient.addColorStop(0.25, "rgba("+color+",0)");
                 context.fillStyle = gradient
-                context.fillRect(x-25, y-25, 200, 200);
+                context.fillRect(x-20, y-20, 40, 40);
             }
         }
 
@@ -120,7 +120,9 @@ function simulator_initialize(backend, isView)
                         if (Object.keys(state["leds"]).length != 0){
                             markers[entry]["leds"] = state["leds"][entry]
                             for (var i = 0; i < 3; i++) {
-                                markers[entry]["leds"][i] = Math.round(Math.min(255, 50+Math.log(markers[entry]["leds"][i]+1)/Math.log(256) * 255))
+                                //markers[entry]["leds"][i] = Math.round(Math.min(255, 50+Math.log(markers[entry]["leds"][i]+1)/Math.log(256) * 255))
+                                // Using empirical stuff to avoid the complicated, computation-heavy methods using logarithms
+                                markers[entry]["leds"][i] = Math.max(markers[entry]["leds"][i] * 4.5, 50)
                             }
                             drawLeds(markers[entry]["leds"], markers[entry]["context"])
                         }
